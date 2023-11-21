@@ -22,7 +22,7 @@ require 'uri'
 
 module Diagtool
   class CollectUtils
-    def initialize(conf, log_level)
+    def initialize(conf, log_level, on_windows: false)
       @logger = Logger.new(STDOUT, level: log_level, formatter: proc {|severity, datetime, progname, msg|
         "#{datetime}: [Collectutils] [#{severity}] #{msg}\n"
       })
@@ -38,6 +38,8 @@ module Diagtool
       }			
       @package_name = conf[:package_name]
       @service_name = conf[:service_name]
+
+      return if on_windows
 
       case @type
       when 'fluentd'
@@ -458,9 +460,14 @@ module Diagtool
                 else
                   "td-agent-gem"
                 end
-      stdout, stderr, status = Open3.capture3("#{command} list | grep fluent")
+      stdout, stderr, status = Open3.capture3("#{command} list")
+      gems = stdout.each_line(chomp: true).select do |line|
+        line.include?("fluent")
+      end.collect do |line|
+        line.split.first
+      end
       File.open(output, 'w') do |f|
-        f.puts(stdout)
+        f.puts(gems.join("\n"))
       end
       return output
     end
