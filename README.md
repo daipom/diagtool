@@ -21,7 +21,7 @@ The scope of data collection:
 <br>   
 
 ## Prerequisite
-Diagtool has been developed for Fluentd(td-agent, fluent-package) and FluentBit(td-agent-bit) running on Linux OS, maily.
+Diagtool has been developed for Fluentd(td-agent, fluent-package) and FluentBit(td-agent-bit) running on Linux OS, mainly.
 On Windows, it only supports the `installed td-agent-gem list` collection for Fluentd, currently (since v1.0.3).
 Diagtool is written in Ruby and Ruby version should be higher than 2.3 for the installation. 
 The supported Linux OS is described in the following page:  
