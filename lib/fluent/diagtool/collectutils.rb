@@ -19,10 +19,13 @@ require 'open3'
 require 'logger'
 require 'net/http'
 require 'uri'
+require 'fluent/diagtool/windows/collectutils'
 
 module Diagtool
   class CollectUtils
-    def initialize(conf, log_level, on_windows: false)
+    prepend Windows::PlatformSpecificCollectUtils if ON_WINDOWS
+
+    def initialize(conf, log_level)
       @logger = Logger.new(STDOUT, level: log_level, formatter: proc {|severity, datetime, progname, msg|
         "#{datetime}: [Collectutils] [#{severity}] #{msg}\n"
       })
@@ -34,12 +37,11 @@ module Diagtool
       @outdir = conf[:outdir]
       @tdenv = {
         'FLUENT_CONF' => '',
-        'TD_AGENT_LOG_FILE' => ''
-      }			
+        'TD_AGENT_LOG_FILE' => '',
+        'FLUENT_PACKAGE_LOG_FILE' => '',
+      }
       @package_name = conf[:package_name]
       @service_name = conf[:service_name]
-
-      return if on_windows
 
       case @type
       when 'fluentd'
@@ -410,8 +412,7 @@ module Diagtool
     end
 
     def match_platform?(platforms_option)
-      on_windows = /mingw/.match?(RUBY_PLATFORM)
-      if on_windows
+      if ON_WINDOWS
         platforms_option == "windows_platforms"
       else
         platforms_option == "not_windows_platforms"

@@ -16,17 +16,8 @@
 #    limitations under the License.
 #
 
-on_windows = /mingw/.match?(RUBY_PLATFORM)
-
 require 'optparse'
-require 'fluent/diagtool/collectutils'
-require 'fluent/diagtool/maskutils'
-require 'fluent/diagtool/validutils'
-if on_windows
-  require 'fluent/diagtool/diagutils-win'
-else
-  require 'fluent/diagtool/diagutils'
-end
+require 'fluent/diagtool/diagutils'
 include Diagtool
 
 params = {}

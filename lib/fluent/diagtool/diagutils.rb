@@ -14,15 +14,22 @@
 #    limitations under the License.
 #
 
+module Diagtool
+  ON_WINDOWS = /mingw/.match?(RUBY_PLATFORM)
+end
+
 require 'logger'
 require 'fileutils'
 require 'fluent/diagtool/collectutils'
 require 'fluent/diagtool/maskutils'
 require 'fluent/diagtool/validutils'
+require 'fluent/diagtool/windows/diagutils'
 include Diagtool
 
 module Diagtool
   class DiagUtils
+    prepend Windows::PlatformSpecificDiagUtils if ON_WINDOWS
+
     def initialize(params)
       time = Time.new
       @time_format = time.strftime("%Y%m%d%0k%M%0S")
